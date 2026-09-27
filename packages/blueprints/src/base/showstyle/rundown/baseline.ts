@@ -15,6 +15,7 @@ export function getBaseline(context: IShowStyleUserContext): BlueprintResultBase
 		timelineObjects: [
 			...(config.visionMixer.type === VisionMixerDevice.Atem ? getAtemBaseline(config) : []),
 			...(config.visionMixer.type === VisionMixerDevice.VMix ? getVMixBaseline(config) : []),
+			...(config.visionMixer.type === VisionMixerDevice.OBS ? getOBSBaseline(config) : []),
 
 			literal<TimelineBlueprintExt<TSR.TimelineContentCCGRoute>>({
 				id: '',
@@ -146,4 +147,8 @@ function getVMixBaseline(config: StudioConfig): TimelineBlueprintExt[] {
 			},
 		}),
 	]
+}
+
+function getOBSBaseline(_config: StudioConfig): TimelineBlueprintExt[] {
+	return []
 }

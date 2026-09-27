@@ -31,4 +31,5 @@ export const DemoStudioConfig: StudioConfig = {
 		mediaplayer: { input: 7, type: SourceType.MediaPlayer },
 		graphics: { input: 8, type: SourceType.Graphics },
 	},
+	obsSources: {},
 }

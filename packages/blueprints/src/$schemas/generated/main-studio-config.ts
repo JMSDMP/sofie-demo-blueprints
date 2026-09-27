@@ -18,6 +18,9 @@ export interface StudioConfig {
 	vmixSources: {
 		[k: string]: VmixInputConfig
 	}
+	obsSources: {
+		[k: string]: ObsInputConfig
+	}
 	sisyfosSources: {
 		[k: string]: SiyfosSourceConfig
 	}
@@ -100,6 +103,14 @@ export interface VmixInputConfig {
  * This interface was referenced by `undefined`'s JSON-Schema definition
  * via the `patternProperty` "".
  */
+export interface ObsInputConfig {
+	input: string
+	type: SourceType
+}
+/**
+ * This interface was referenced by `undefined`'s JSON-Schema definition
+ * via the `patternProperty` "".
+ */
 export interface SiyfosSourceConfig {
 	source: number
 	type: AudioSourceType
@@ -111,6 +122,7 @@ export interface SiyfosSourceConfig {
 export enum VisionMixerDevice {
 	Atem = 'Atem',
 	VMix = 'Vmix',
+	OBS = 'OBS',
 }
 export enum SourceType {
 	Camera = 'camera',
@@ -118,6 +130,7 @@ export enum SourceType {
 	MediaPlayer = 'mediaplayer',
 	Graphics = 'graphics',
 	MultiView = 'multiview',
+	ObsDve = 'obsdve',
 }
 export enum AudioSourceType {
 	Host = 'host',

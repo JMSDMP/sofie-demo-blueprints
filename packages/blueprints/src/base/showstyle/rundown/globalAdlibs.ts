@@ -4,7 +4,7 @@ import { AudioSourceType, SourceType } from '../../studio/helpers/config.js'
 import { getAudioObjectOnLayer, getAudioPrimaryObject } from '../helpers/audio.js'
 import { createVisionMixerObjects } from '../helpers/visionMixer.js'
 import { getOutputLayerForSourceLayer, SourceLayer } from '../applyconfig/layers.js'
-import { InputConfig, VisionMixerDevice } from '../../../$schemas/generated/main-studio-config.js'
+import { InputConfig, ObsInputConfig, VisionMixerDevice } from '../../../$schemas/generated/main-studio-config.js'
 import { parseConfig } from '../helpers/config.js'
 import { SisyfosLayers } from '../../studio/layers.js'
 
@@ -14,7 +14,7 @@ export function getGlobalAdlibs(context: IShowStyleUserContext): IBlueprintAdLib
 	context.logError('Global Adlib Studio Config: ' + JSON.stringify(config))
 
 	context.logError('Making camera adlibs')
-	const makeCameraAdlib = (id: number, input: number): IBlueprintAdLibPiece => ({
+	const makeCameraAdlib = (id: number, input: number | string): IBlueprintAdLibPiece => ({
 		_rank: 100 + id,
 		externalId: 'cam' + id,
 		name: `Camera ${id + 1}`,
@@ -29,7 +29,7 @@ export function getGlobalAdlibs(context: IShowStyleUserContext): IBlueprintAdLib
 		},
 	})
 	context.logError('Making remote adlibs')
-	const makeRemoteAdlib = (id: number, input: number): IBlueprintAdLibPiece => ({
+	const makeRemoteAdlib = (id: number, input: number | string): IBlueprintAdLibPiece => ({
 		_rank: 200 + id,
 		externalId: 'rem' + id,
 		name: `Remote ${id + 1}`,
@@ -97,6 +97,17 @@ export function getGlobalAdlibs(context: IShowStyleUserContext): IBlueprintAdLib
 				.filter((source) => source.type === SourceType.Camera)
 				.map((source, i) => makeCameraAdlib(i, source.input)),
 			...Object.values<InputConfig>(config.vmixSources)
+				.filter((source) => source.type === SourceType.Remote)
+				.map((source, i) => makeRemoteAdlib(i, source.input)),
+			...hostMicOverrides,
+		]
+	} else if (config.visionMixer.type === VisionMixerDevice.OBS) {
+		context.logError('Vision mixer type is found: OBS')
+		return [
+			...Object.values<ObsInputConfig>(config.obsSources)
+				.filter((source) => source.type === SourceType.Camera)
+				.map((source, i) => makeCameraAdlib(i, source.input)),
+			...Object.values<ObsInputConfig>(config.obsSources)
 				.filter((source) => source.type === SourceType.Remote)
 				.map((source, i) => makeRemoteAdlib(i, source.input)),
 			...hostMicOverrides,

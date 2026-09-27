@@ -6,6 +6,12 @@ export enum AtemLayers {
 	AtemSuperSourceBoxes = 'atem_supersource_boxes',
 }
 
+export enum ObsLayers {
+	ObsProgram = 'obs_program',
+	ObsPreview = 'obs_preview',
+	ObsDVE = 'obs_dve',
+}
+
 export enum VMixLayers {
 	VMixMeProgram = 'vmix_me_program',
 	VMixMePreview = 'vmix_me_preview',

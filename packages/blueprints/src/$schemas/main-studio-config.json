@@ -24,8 +24,8 @@
 					"ui:category": "Vision Mixer",
 					"ui:title": "Vision Mixer Device",
 					"title": "VisionMixerDevice",
-					"enum": ["Atem", "Vmix"],
-					"tsEnumNames": ["Atem", "VMix"],
+					"enum": ["Atem", "Vmix", "OBS"],
+					"tsEnumNames": ["Atem", "VMix", "OBS"],
 					"default": "Atem"
 				},
 				"host": {
@@ -182,6 +182,31 @@
 				}
 			}
 		},
+		"obsSources": {
+			"type": "object",
+			"ui:title": "OBS Sources",
+			"ui:description": "Description of OBS inputs i.e. cameras, remotes etc.",
+			"ui:category": "Inputs",
+			"patternProperties": {
+				"": {
+					"type": "object",
+					"title": "ObsInputConfig",
+					"properties": {
+						"input": {
+							"type": "string",
+							"ui:title": "Scene",
+							"ui:description": "Scene name for the OBS source",
+							"ui:summaryTitle": "Scene",
+							"default": ""
+						},
+						"type": {
+							"$ref": "#/$defs/SourceType"
+						}
+					},
+					"required": ["input", "type"]
+				}
+			}
+		},
 		"sisyfosSources": {
 			"type": "object",
 			"ui:title": "Sisyfos Sources",
@@ -237,6 +262,7 @@
 		"vmixSources",
 		"atemOutputs",
 		"atemSources",
+		"obsSources",
 		"visionMixer",
 		"audioMixer",
 		"casparcg"
@@ -245,8 +271,8 @@
 		"SourceType": {
 			"title": "SourceType",
 			"type": "string",
-			"enum": ["camera", "remote", "mediaplayer", "graphics", "multiview"],
-			"tsEnumNames": ["Camera", "Remote", "MediaPlayer", "Graphics", "MultiView"],
+			"enum": ["camera", "remote", "mediaplayer", "graphics", "multiview", "obsdve"],
+			"tsEnumNames": ["Camera", "Remote", "MediaPlayer", "Graphics", "MultiView", "ObsDve"],
 
 			"ui:title": "Type",
 			"ui:description": "Input Type",

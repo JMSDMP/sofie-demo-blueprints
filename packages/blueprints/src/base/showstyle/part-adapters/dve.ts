@@ -29,14 +29,20 @@ export function generateDVEPart(context: PartContext, part: PartProps<DVEProps>)
 	const layout = parseSuperSourceLayout(context, part.payload)
 	const boxes: TSR.SuperSourceBox[] = part.payload.inputs.map((input, i) => {
 		let source = undefined
+		let x = undefined
 		if ('fileName' in input) {
 			source = getClipPlayerInput(config)
 		} else {
 			source = getSourceInfoFromRaw(config, input)
 		}
+		if (source?.input && typeof source.input === 'number') {
+			x = source.input
+		} else {
+			x = 0
+		}
 		return {
 			...layout[i],
-			source: source?.input || 0,
+			source: x,
 		}
 	})
 
@@ -122,6 +128,8 @@ export function generateDVEPart(context: PartContext, part: PartProps<DVEProps>)
 				},
 			})
 		)
+	} else if (config.visionMixer.type === VisionMixerDevice.OBS) {
+		// OBS DVE not currently supported.
 	} else {
 		assertUnreachable(config.visionMixer.type)
 	}
@@ -189,6 +197,8 @@ export function generateDVEPart(context: PartContext, part: PartProps<DVEProps>)
 				},
 			})
 		)
+	} else if (config.visionMixer.type === VisionMixerDevice.OBS) {
+		// OBS DVE not currently supported.
 	} else {
 		assertUnreachable(config.visionMixer.type)
 	}

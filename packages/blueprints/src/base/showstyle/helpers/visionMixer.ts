@@ -2,7 +2,7 @@ import { TSR } from '@sofie-automation/blueprints-integration'
 import { assertUnreachable, literal } from '../../../common/util.js'
 import { TimelineBlueprintExt } from '../../studio/customTypes.js'
 import { StudioConfig, VisionMixerDevice } from '../../studio/helpers/config.js'
-import { AtemLayers, VMixLayers } from '../../studio/layers.js'
+import { AtemLayers, ObsLayers, VMixLayers } from '../../studio/layers.js'
 
 export function createAtemInputTimelineObjects(
 	input: number,
@@ -122,20 +122,91 @@ export function createVMixTimelineObjects(
 	]
 }
 
+export function createObsTimelineObjects(
+	sceneName: string | undefined,
+	start = 0
+): TimelineBlueprintExt<TSR.TimelineContentOBSCurrentScene>[] {
+	return [
+		literal<TimelineBlueprintExt<TSR.TimelineContentOBSCurrentScene>>({
+			id: '',
+			enable: { start: start },
+			layer: ObsLayers.ObsProgram,
+			content: {
+				deviceType: TSR.DeviceType.OBS,
+				type: TSR.TimelineContentTypeOBS.CURRENT_SCENE,
+				sceneName: sceneName || 'BLACK',
+			},
+			priority: 1,
+		}),
+		literal<TimelineBlueprintExt<TSR.TimelineContentOBSCurrentScene>>({
+			id: '',
+			// enable: { start: start + 40 },
+			enable: { start: start },
+			layer: ObsLayers.ObsPreview,
+			content: {
+				deviceType: TSR.DeviceType.OBS,
+				type: TSR.TimelineContentTypeOBS.CURRENT_SCENE,
+				sceneName: sceneName || 'BLACK',
+			},
+			// keyframes: [
+			// 	{
+			// 		id: '',
+			// 		enable: {
+			// 			start: 40, // after the transition keyframe
+			// 		},
+			// 		content: {
+			// 			sceneName,
+			// 		},
+			// 		preserveForLookahead: true,
+			// 	},
+			// ],
+			priority: 1,
+		}),
+	]
+}
+
+function expectsNumberInput(input: number | string | undefined): number {
+	if (typeof input !== 'number' && input !== undefined) {
+		throw new Error(`Vision mixer expects input to be a number, but got ${input}`)
+	} else if (input === undefined) {
+		input = 0
+	}
+	return input
+}
+
+function expectsStringInput(input: number | string | undefined): string | undefined {
+	if (typeof input !== 'string' && input !== undefined) {
+		throw new Error(`Vision mixer expects input to be a string, but got ${input}`)
+	}
+	return input
+}
+
 export function createVisionMixerObjects(
 	config: StudioConfig,
-	input: number,
+	input: number | string | undefined,
 	start = 0,
 	transitionDuration = 40,
 	transitionProps?: {
 		atemTransitionProps?: Omit<TSR.TimelineContentAtemME['me'], 'programInput' | 'previewInput'>
 		vmixTransitionProps?: TSR.VMixTransition
 	}
-): TimelineBlueprintExt<TSR.TimelineContentVMixAny | TSR.TimelineContentAtemAny>[] {
+): TimelineBlueprintExt<TSR.TimelineContentVMixAny | TSR.TimelineContentAtemAny | TSR.TimelineContentOBSAny>[] {
 	if (config.visionMixer.type === VisionMixerDevice.Atem) {
-		return createAtemInputTimelineObjects(input, start, transitionDuration, transitionProps?.atemTransitionProps)
+		return createAtemInputTimelineObjects(
+			expectsNumberInput(input),
+			start,
+			transitionDuration,
+			transitionProps?.atemTransitionProps
+		)
 	} else if (config.visionMixer.type === VisionMixerDevice.VMix) {
-		return createVMixTimelineObjects(input, start, transitionDuration, transitionProps?.vmixTransitionProps)
+		return createVMixTimelineObjects(
+			expectsNumberInput(input),
+			start,
+			transitionDuration,
+			transitionProps?.vmixTransitionProps
+		)
+	} else if (config.visionMixer.type === VisionMixerDevice.OBS) {
+		return createObsTimelineObjects(expectsStringInput(input), start)
 	} else {
 		assertUnreachable(config.visionMixer.type)
 		return []

@@ -4,6 +4,7 @@ import { getVMixMappings } from './vmix.js'
 import { getAtemMappings } from './atem.js'
 import { getSisyfosMappings } from './sisyfos.js'
 import { getCasparCGMappings } from './casparcg.js'
+import { getObsMappings } from './obs.js'
 import { AbstractLayers } from '../../layers.js'
 import { assertNever } from '../../../../common/util.js'
 
@@ -25,6 +26,9 @@ export function getMappingsDefaults(context: ICommonContext, config: BlueprintCo
 			break
 		case VisionMixerDevice.VMix:
 			Object.assign(mappings, getVMixMappings(config.studio.vmixSources))
+			break
+		case VisionMixerDevice.OBS:
+			Object.assign(mappings, getObsMappings(config))
 			break
 		default:
 			assertNever(config.studio.visionMixer.type)

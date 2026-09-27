@@ -12,7 +12,7 @@ import { CasparCGLayers } from '../../studio/layers.js'
 import { getOutputLayerForSourceLayer, SourceLayer } from '../applyconfig/layers.js'
 import { createVisionMixerObjects } from './visionMixer.js'
 import { TimelineBlueprintExt } from '../../studio/customTypes.js'
-import { InputConfig, VmixInputConfig } from '../../..//$schemas/generated/main-studio-config.js'
+import { InputConfig, ObsInputConfig, VmixInputConfig } from '../../..//$schemas/generated/main-studio-config.js'
 
 export interface ClipProps {
 	fileName: string
@@ -35,7 +35,7 @@ export function parseClipEditorProps(object: VideoObject): ClipProps {
 	}
 }
 
-export function getClipPlayerInput(config: StudioConfig): StudioConfig['atemSources'][any] | undefined {
+export function getClipPlayerInput(config: StudioConfig): InputConfig | VmixInputConfig | ObsInputConfig | undefined {
 	if (config.visionMixer.type === VisionMixerDevice.Atem) {
 		const mediaplayerInput = Object.values<InputConfig>(config.atemSources).find(
 			(s) => s.type === SourceType.MediaPlayer
@@ -44,6 +44,12 @@ export function getClipPlayerInput(config: StudioConfig): StudioConfig['atemSour
 		return mediaplayerInput
 	} else if (config.visionMixer.type === VisionMixerDevice.VMix) {
 		const mediaplayerInput = Object.values<VmixInputConfig>(config.vmixSources).find(
+			(s) => s.type === SourceType.MediaPlayer
+		)
+
+		return mediaplayerInput
+	} else if (config.visionMixer.type === VisionMixerDevice.OBS) {
+		const mediaplayerInput = Object.values<ObsInputConfig>(config.obsSources).find(
 			(s) => s.type === SourceType.MediaPlayer
 		)
 
