@@ -47,7 +47,7 @@ export function generateOpenerPart(context: PartContext, part: PartProps<TitlesP
 				literal<TimelineBlueprintExt<TSR.TimelineContentCCGMedia>>({
 					id: '',
 					enable: { start: 0 },
-					layer: CasparCGLayers.CasparCGEffectsPlayer,
+					layer: CasparCGLayers.CasparCGClipPlayer1,
 					content: {
 						deviceType: TSR.DeviceType.CASPARCG,
 						type: TSR.TimelineContentTypeCasparCg.MEDIA,
@@ -99,7 +99,8 @@ export function generateOpenerPart(context: PartContext, part: PartProps<TitlesP
 			fileName: 'assets/Sofie News Opener Audio Bed',
 
 			timelineObjects: [
-				...createVisionMixerObjects(config, visionMixerInput?.input || 0),
+				// commented out as it caused CasparCGLayers.CasparCGClipPlayer1 to be put to program briefly.
+				// ...createVisionMixerObjects(config, visionMixerInput?.input || 0),
 
 				// clip
 				literal<TimelineBlueprintExt<TSR.TimelineContentCCGMedia>>({
@@ -129,7 +130,7 @@ export function generateOpenerPart(context: PartContext, part: PartProps<TitlesP
 		expectedPackages: [
 			literal<ExpectedPackage.ExpectedPackageMediaFile>({
 				_id: context.getHashId('assets/Sofie News Opener Audio Bed.wav', true),
-				layers: [CasparCGLayers.CasparCGClipPlayer1],
+				layers: [CasparCGLayers.CasparCGAudioBed],
 				type: ExpectedPackage.PackageType.MEDIA_FILE,
 				content: {
 					filePath: 'assets/Sofie News Opener Audio Bed.wav',
