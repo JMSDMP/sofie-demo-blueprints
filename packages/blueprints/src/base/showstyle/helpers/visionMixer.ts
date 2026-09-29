@@ -140,8 +140,7 @@ export function createObsTimelineObjects(
 		}),
 		literal<TimelineBlueprintExt<TSR.TimelineContentOBSCurrentScene>>({
 			id: '',
-			// enable: { start: start + 40 },
-			enable: { start: start },
+			enable: { start: start + 40 },
 			layer: ObsLayers.ObsPreview,
 			content: {
 				deviceType: TSR.DeviceType.OBS,
@@ -160,7 +159,7 @@ export function createObsTimelineObjects(
 			// 		preserveForLookahead: true,
 			// 	},
 			// ],
-			priority: 1,
+			priority: 0.1,
 		}),
 	]
 }
