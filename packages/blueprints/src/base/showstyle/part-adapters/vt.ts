@@ -11,10 +11,9 @@ import { AudioSourceType } from '../../studio/helpers/config.js'
 import { CasparCGLayers } from '../../studio/layers.js'
 import { PartProps, VTProps } from '../definitions/index.js'
 import { getAudioPrimaryObject } from '../helpers/audio.js'
-import { getClipPlayerInput } from '../helpers/clips.js'
 import { parseGraphicsFromObjects } from '../helpers/graphics.js'
 import { createScriptPiece } from '../helpers/script.js'
-import { createVisionMixerObjects } from '../helpers/visionMixer.js'
+import { createAbVisionMixerObjects } from '../helpers/visionMixer.js'
 import { getOutputLayerForSourceLayer, SourceLayer } from '../applyconfig/layers.js'
 import { TimelineBlueprintExt } from '../../studio/customTypes.js'
 import { parseConfig } from '../helpers/config.js'
@@ -22,7 +21,6 @@ import { parseOGrafGraphicsFromObjects } from '../helpers/ograf-graphics.js'
 
 export function generateVTPart(context: PartContext, part: PartProps<VTProps>): BlueprintResultPart {
 	const config = parseConfig(context).studio
-	const visionMixerInput = getClipPlayerInput(config)
 
 	const audioTlObj = getAudioPrimaryObject(config, [{ type: AudioSourceType.Playback, index: 0 }]) // todo: which playback?
 
@@ -31,7 +29,7 @@ export function generateVTPart(context: PartContext, part: PartProps<VTProps>): 
 			start: 0,
 		},
 		externalId: part.payload.externalId,
-		name: `${part.payload.clipProps?.fileName || 'Missing file name'}`,
+		name: `${part.payload.clipProps?.fileName || 'Missing file name'} ${part.payload.externalId}`,
 		lifespan: PieceLifespan.WithinPart,
 		sourceLayerId: SourceLayer.VT,
 		outputLayerId: getOutputLayerForSourceLayer(SourceLayer.VT),
@@ -46,12 +44,20 @@ export function generateVTPart(context: PartContext, part: PartProps<VTProps>): 
 			fileName: part.payload.clipProps.fileName,
 
 			timelineObjects: [
-				...createVisionMixerObjects(config, visionMixerInput?.input || 0, config.casparcgLatency),
+				...createAbVisionMixerObjects(
+					config,
+					{
+						poolName: 'clip',
+						sessionName: part.payload.externalId,
+					},
+					config.casparcgLatency
+				),
 
 				literal<TimelineBlueprintExt<TSR.TimelineContentCCGMedia>>({
 					id: '',
 					enable: { start: 0 },
-					layer: CasparCGLayers.CasparCGClipPlayer1,
+					// specific player will be assigned by ABResolver automatically.
+					layer: CasparCGLayers.CasparCGAbPending,
 					content: {
 						deviceType: TSR.DeviceType.CASPARCG,
 						type: TSR.TimelineContentTypeCasparCg.MEDIA,
@@ -59,6 +65,12 @@ export function generateVTPart(context: PartContext, part: PartProps<VTProps>): 
 						file: stripExtension(part.payload.clipProps.fileName),
 					},
 					priority: 1,
+					abSessions: [
+						{
+							poolName: 'clip',
+							sessionName: part.payload.externalId,
+						},
+					],
 				}),
 
 				audioTlObj,

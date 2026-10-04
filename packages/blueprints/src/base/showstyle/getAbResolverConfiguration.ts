@@ -1,16 +1,18 @@
 import {
 	ABPlayerDefinition,
+	AbPlayerId,
 	ABResolverConfiguration,
 	IShowStyleContext,
 } from '@sofie-automation/blueprints-integration'
+import { CasparCGLayers } from '../studio/layers.js'
 
 // This is a very basic implementation of the ABResolverConfiguration:
 export function getAbResolverConfiguration(_context: IShowStyleContext): ABResolverConfiguration {
 	const player1: ABPlayerDefinition = {
-		playerId: 'casparcg_clip_player1',
+		playerId: CasparCGLayers.CasparCGClipPlayer1,
 	}
 	const player2: ABPlayerDefinition = {
-		playerId: 'casparcg_clip_player2',
+		playerId: CasparCGLayers.CasparCGClipPlayer2,
 	}
 	return {
 		resolverOptions: {
@@ -19,6 +21,13 @@ export function getAbResolverConfiguration(_context: IShowStyleContext): ABResol
 		},
 		pools: {
 			clip: [player1, player2],
+		},
+		timelineObjectLayerChangeRules: {
+			[CasparCGLayers.CasparCGAbPending]: {
+				acceptedPoolNames: ['clip'],
+				newLayerName: (playerId: AbPlayerId) => String(playerId),
+				allowsLookahead: true,
+			},
 		},
 	}
 }

@@ -9,10 +9,9 @@ import { PartContext } from '../../../common/context.js'
 import { changeExtension, literal, stripExtension } from '../../../common/util.js'
 import { CasparCGLayers } from '../../studio/layers.js'
 import { PartProps, VOProps } from '../definitions/index.js'
-import { getClipPlayerInput } from '../helpers/clips.js'
 import { parseGraphicsFromObjects } from '../helpers/graphics.js'
 import { createScriptPiece } from '../helpers/script.js'
-import { createVisionMixerObjects } from '../helpers/visionMixer.js'
+import { createAbVisionMixerObjects } from '../helpers/visionMixer.js'
 import { getOutputLayerForSourceLayer, SourceLayer } from '../applyconfig/layers.js'
 import { TimelineBlueprintExt } from '../../studio/customTypes.js'
 import { parseConfig } from '../helpers/config.js'
@@ -20,14 +19,13 @@ import { parseOGrafGraphicsFromObjects } from '../helpers/ograf-graphics.js'
 
 export function generateVOPart(context: PartContext, part: PartProps<VOProps>): BlueprintResultPart {
 	const config = parseConfig(context).studio
-	const atemInput = getClipPlayerInput(config)
 
 	const cameraPiece: IBlueprintPiece = {
 		enable: {
 			start: 0,
 		},
 		externalId: part.payload.externalId,
-		name: `${part.payload.clipProps.fileName || 'Missing file name'}`,
+		name: `${part.payload.clipProps.fileName || 'Missing file name'} ${part.payload.externalId}`,
 		lifespan: PieceLifespan.WithinPart,
 		sourceLayerId: SourceLayer.VO,
 		outputLayerId: getOutputLayerForSourceLayer(SourceLayer.VO),
@@ -42,12 +40,20 @@ export function generateVOPart(context: PartContext, part: PartProps<VOProps>): 
 			fileName: part.payload.clipProps.fileName,
 
 			timelineObjects: [
-				...createVisionMixerObjects(config, atemInput?.input || 0, config.casparcgLatency),
+				...createAbVisionMixerObjects(
+					config,
+					{
+						poolName: 'clip',
+						sessionName: part.payload.externalId,
+					},
+					config.casparcgLatency
+				),
 
 				literal<TimelineBlueprintExt<TSR.TimelineContentCCGMedia>>({
 					id: '',
 					enable: { start: 0 },
-					layer: CasparCGLayers.CasparCGClipPlayer1,
+					// specific player will be assigned by ABResolver automatically.
+					layer: CasparCGLayers.CasparCGAbPending,
 					content: {
 						deviceType: TSR.DeviceType.CASPARCG,
 						type: TSR.TimelineContentTypeCasparCg.MEDIA,
@@ -55,6 +61,13 @@ export function generateVOPart(context: PartContext, part: PartProps<VOProps>): 
 						file: stripExtension(part.payload.clipProps.fileName),
 					},
 					priority: 1,
+
+					abSessions: [
+						{
+							poolName: 'clip',
+							sessionName: part.payload.externalId,
+						},
+					],
 				}),
 			],
 

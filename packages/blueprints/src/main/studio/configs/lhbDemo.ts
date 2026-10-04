@@ -26,8 +26,8 @@ export const LhbDemoStudioConfig: StudioConfig = {
 		camera1: { input: 'Camera 1', type: SourceType.Camera },
 		camera2: { input: 'Camera 2', type: SourceType.Camera },
 		os1: { input: 'OS 1', type: SourceType.Remote },
-		txA: { input: 'Caspar 1 (TX A)', type: SourceType.MediaPlayer },
-		//txB: { input: 'Caspar 2 (TX B)', type: SourceType.MediaPlayer },
+		player1: { input: 'Caspar 1 (TX A)', type: SourceType.MediaPlayer },
+		player2: { input: 'Caspar 2 (TX B)', type: SourceType.MediaPlayer },
 		graphics: { input: 'Caspar 3 (Graphics)', type: SourceType.Graphics },
 	},
 }

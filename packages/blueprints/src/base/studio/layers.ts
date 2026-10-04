@@ -30,6 +30,8 @@ export enum CasparCGLayers {
 	CasparCGClipPlayerPreview = 'casparcg_clip_player_preview',
 	CasparCGEffectsPlayer = 'casparcg_effects_player',
 
+	CasparCGAbPending = 'casparcg_ab_pending',
+
 	CasparCGGraphicsLowerThird = 'casparcg_graphics_l3d',
 	CasparCGGraphicsTicker = 'casparcg_graphics_ticker',
 	CasparCGGraphicsStrap = 'casparcg_graphics_strap',

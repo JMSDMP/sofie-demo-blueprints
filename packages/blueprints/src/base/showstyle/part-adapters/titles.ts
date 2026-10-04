@@ -47,7 +47,8 @@ export function generateOpenerPart(context: PartContext, part: PartProps<TitlesP
 				literal<TimelineBlueprintExt<TSR.TimelineContentCCGMedia>>({
 					id: '',
 					enable: { start: 0 },
-					layer: CasparCGLayers.CasparCGClipPlayer1,
+					// specific player will be assigned by ABResolver automatically.
+					layer: CasparCGLayers.CasparCGAbPending,
 					content: {
 						deviceType: TSR.DeviceType.CASPARCG,
 						type: TSR.TimelineContentTypeCasparCg.MEDIA,
@@ -55,6 +56,12 @@ export function generateOpenerPart(context: PartContext, part: PartProps<TitlesP
 						file: 'assets/Sofie News Opener',
 					},
 					priority: 1,
+					abSessions: [
+						{
+							poolName: 'clip',
+							sessionName: part.payload.externalId,
+						},
+					],
 				}),
 			],
 		},
