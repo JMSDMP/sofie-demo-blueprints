@@ -9,16 +9,14 @@ import { PartContext } from '../../../common/context.js'
 import { literal } from '../../../common/util.js'
 import { CasparCGLayers } from '../../studio/layers.js'
 import { PartProps, TitlesProps } from '../definitions/index.js'
-import { getClipPlayerInput } from '../helpers/clips.js'
 import { createScriptPiece } from '../helpers/script.js'
-import { createVisionMixerObjects } from '../helpers/visionMixer.js'
+import { createAbVisionMixerObjects } from '../helpers/visionMixer.js'
 import { getOutputLayerForSourceLayer, SourceLayer } from '../applyconfig/layers.js'
 import { TimelineBlueprintExt } from '../../studio/customTypes.js'
 import { parseConfig } from '../helpers/config.js'
 
 export function generateOpenerPart(context: PartContext, part: PartProps<TitlesProps>): BlueprintResultPart {
 	const config = parseConfig(context).studio
-	const visionMixerInput = getClipPlayerInput(config)
 
 	const cameraPiece: IBlueprintPiece = {
 		enable: {
@@ -41,7 +39,10 @@ export function generateOpenerPart(context: PartContext, part: PartProps<TitlesP
 			ignoreAudioFormat: true,
 
 			timelineObjects: [
-				...createVisionMixerObjects(config, visionMixerInput?.input || 0),
+				...createAbVisionMixerObjects(config, {
+					poolName: 'clip',
+					sessionName: part.payload.externalId,
+				}),
 
 				// clip
 				literal<TimelineBlueprintExt<TSR.TimelineContentCCGMedia>>({
